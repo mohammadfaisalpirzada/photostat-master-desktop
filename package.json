@@ -30,8 +30,9 @@
   "build": {
     "appId": "com.themastersahib.photostat.desktop",
     "productName": "Photostat Master",
+    "npmRebuild": false,
     "directories": { "output": "release" },
-    "files": [ "dist/**/*", "electron/**/*" ],
+    "files": [ "dist/**/*", "electron/**/*", "!node_modules/canvas/**/*" ],
     "win": {
       "target": [ { "target": "nsis", "arch": [ "x64" ] } ],
       "icon": "build/icon.ico",
