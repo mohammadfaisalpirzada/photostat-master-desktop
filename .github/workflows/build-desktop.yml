@@ -29,7 +29,15 @@ jobs:
         run: npm run build
 
       - name: Package Windows installer (electron-builder)
-        run: npx electron-builder --win --publish never
+        shell: bash
+        run: |
+          set +e
+          npx electron-builder --win --publish never 2>&1 | tee eb.log
+          code=${PIPESTATUS[0]}
+          if [ "$code" -ne 0 ]; then
+            grep -iE "error|cannot|fail|exception|not found|ENOENT|signtool|nsis|icon" eb.log | tail -40 | while IFS= read -r l; do echo "::error::$l"; done
+          fi
+          exit $code
 
       - name: Upload installer (artifact)
         uses: actions/upload-artifact@v4
