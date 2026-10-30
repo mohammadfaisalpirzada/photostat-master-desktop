@@ -1,0 +1,48 @@
+name: Build Desktop (Windows)
+
+# Builds a Windows .exe installer on every push and publishes it to the
+# "latest" release for a stable download link.
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build renderer (Vite)
+        run: npm run build
+
+      - name: Package Windows installer (electron-builder)
+        run: npx electron-builder --win --publish never
+
+      - name: Upload installer (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: photostat-master-setup
+          path: release/*.exe
+          if-no-files-found: error
+
+      - name: Publish to "latest" Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Photostat Master Desktop — latest
+          body: Windows installer. Run the .exe to install Photostat Master.
+          files: release/*.exe
