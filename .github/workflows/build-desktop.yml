@@ -27,6 +27,7 @@ jobs:
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
+          GOOGLE_CLIENT_SECRET="$(printf '%s' "$GOOGLE_CLIENT_SECRET" | tr -d '[:space:]')"
           cat > electron/google-config.js <<EOF
           module.exports = {
             clientId: '900136320125-3t5upmp3hgrkiq737n5r49g895ee6rdu.apps.googleusercontent.com',
