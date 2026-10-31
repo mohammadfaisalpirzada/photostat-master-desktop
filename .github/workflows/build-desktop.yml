@@ -22,6 +22,19 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Write Google OAuth config (secret injected here, not in repo)
+        shell: bash
+        env:
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        run: |
+          cat > electron/google-config.js <<EOF
+          module.exports = {
+            clientId: '900136320125-3t5upmp3hgrkiq737n5r49g895ee6rdu.apps.googleusercontent.com',
+            clientSecret: '${GOOGLE_CLIENT_SECRET}'
+          }
+          EOF
+          echo "google-config.js written (secret length: ${#GOOGLE_CLIENT_SECRET})"
+
       - name: Install dependencies
         run: npm install
 

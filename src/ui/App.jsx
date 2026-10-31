@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { auth } from '../firebase.js'
 import {
   onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  signOut, signInWithPopup, GoogleAuthProvider
+  signOut, signInWithCredential, GoogleAuthProvider
 } from 'firebase/auth'
 import { loadPdf, renderPageToCanvas, pageToBytes } from '../lib/pdfRender.js'
 import { mergePdfs, splitPdf, imagesToPdf } from '../lib/convert.js'
@@ -45,8 +45,10 @@ function Login () {
   }
   const google = async () => {
     setBusy(true); setErr(null)
-    try { await signInWithPopup(auth, new GoogleAuthProvider()) }
-    catch (e) { setErr('Google sign-in failed: ' + e.message) } finally { setBusy(false) }
+    try {
+      const idToken = await window.desktop.googleSignIn()
+      await signInWithCredential(auth, GoogleAuthProvider.credential(idToken))
+    } catch (e) { setErr('Google sign-in failed: ' + e.message) } finally { setBusy(false) }
   }
 
   return (
