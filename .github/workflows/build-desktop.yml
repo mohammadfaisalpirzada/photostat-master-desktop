@@ -33,7 +33,7 @@ jobs:
             clientSecret: '${GOOGLE_CLIENT_SECRET}'
           }
           EOF
-          echo "google-config.js written (secret length: ${#GOOGLE_CLIENT_SECRET})"
+          echo "::notice::clientSecretLen=${#GOOGLE_CLIENT_SECRET} (expected 35)"
 
       - name: Install dependencies
         run: npm install
